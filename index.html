@@ -547,7 +547,7 @@
                 <!-- Botões de navegação do quiz -->
                 <div id="quiz-navigation-buttons" class="quiz-navigation-buttons hidden">
                     <button id="next-button" class="btn primary-btn">Próxima Pergunta ▶</button>
-                    <button id="back-to-start-quiz-button" class="btn secondary-btn">Voltar ao Início</button>
+                    <!-- Removed back-to-start-quiz-button from HTML -->
                 </div>
 
                 <div class="question-card">
@@ -942,7 +942,8 @@
         const optionsContainer = document.getElementById('options-container');
         
         const nextButton = document.getElementById('next-button');
-        const backToStartQuizButton = document.getElementById('back-to-start-quiz-button'); // Botão "Voltar ao Início" no quiz
+        // Removed backToStartQuizButton as it's no longer used
+        // const backToStartQuizButton = document.getElementById('back-to-start-quiz-button'); 
 
         const levelEndTitle = document.getElementById('level-end-title');
         const levelEndScore = document.getElementById('level-end-score');
@@ -1108,29 +1109,38 @@
             if (isCorrect) {
                 correctSound.play();
                 correctAnswersInLevel++;
+                // Apply correct styling after feedback
+                document.querySelectorAll('.option-btn').forEach(button => {
+                    if (button.textContent === currentQuestion.answer) {
+                        button.style.backgroundColor = 'var(--correct-feedback)'; // Aplica cor de acerto
+                        button.style.color = 'white';
+                    }
+                });
+
+                // After a short delay, hide the feedback overlay and reveal navigation buttons
+                setTimeout(() => {
+                    feedbackOverlay.classList.remove('active', 'correct', 'incorrect');
+                    feedbackOverlay.classList.add('hidden');
+                    quizNavigationButtons.classList.remove('hidden'); // Reveal next question button
+                }, 1500); // Overlay visible for 1.5 seconds
+
             } else {
                 incorrectSound.play();
+                // Apply incorrect styling after feedback
+                document.querySelectorAll('.option-btn').forEach(button => {
+                    if (button.textContent === selectedOption) {
+                        button.style.backgroundColor = 'var(--incorrect-feedback)'; // Aplica cor de erro
+                        button.style.color = 'white';
+                    }
+                });
+
+                // On incorrect answer, restart the game
+                setTimeout(() => {
+                    feedbackOverlay.classList.remove('active', 'correct', 'incorrect');
+                    feedbackOverlay.classList.add('hidden');
+                    restartGame(); // Restart the game
+                }, 1500); // Overlay visible for 1.5 seconds before restart
             }
-
-            // Aplicar destaque de correto/incorreto às opções - sem animação, apenas a cor se mantém
-            document.querySelectorAll('.option-btn').forEach(button => {
-                if (button.textContent === currentQuestion.answer) {
-                    button.style.backgroundColor = 'var(--correct-feedback)'; // Aplica cor de acerto
-                    button.style.color = 'white';
-                } else if (button.textContent === selectedOption) {
-                    button.style.backgroundColor = 'var(--incorrect-feedback)'; // Aplica cor de erro
-                    button.style.color = 'white';
-                }
-            });
-
-            // Após um pequeno atraso, esconder o overlay de feedback e revelar os botões de navegação
-            setTimeout(() => {
-                feedbackOverlay.classList.remove('active', 'correct', 'incorrect');
-                feedbackOverlay.classList.add('hidden');
-                
-                quizNavigationButtons.classList.remove('hidden'); // Revela os botões de navegação
-
-            }, 1500); // Overlay de feedback visível por 1.5 segundos
 
             updateProgressBar();
         }
@@ -1212,7 +1222,7 @@
         });
         // Ao sair do jogo (pela seleção de nível ou tela de quiz), ele se reinicia desde o começo
         backToStartButton.addEventListener('click', restartGame);
-        backToStartQuizButton.addEventListener('click', restartGame); // Evento para o botão no quiz
+        // backToStartQuizButton.addEventListener('click', restartGame); // Removed this button and its event
         nextButton.addEventListener('click', nextQuestion);
         returnToLevelsButton.addEventListener('click', showLevelSelectionScreen);
         restartGameButton.addEventListener('click', restartGame);
