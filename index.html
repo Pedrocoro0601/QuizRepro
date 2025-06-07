@@ -36,7 +36,8 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, var(--background-light) 0%, #c1e7f0 100%); /* Gradiente de azuis */
+            /* Alterado para o fundo azul mais escuro */
+            background: var(--dark-blue-background); 
             color: var(--text-color-dark);
             line-height: 1.6;
         }
@@ -544,17 +545,16 @@
                     <div id="progress-bar" class="progress-bar"></div>
                 </div>
 
-                <!-- Botões de navegação do quiz -->
-                <div id="quiz-navigation-buttons" class="quiz-navigation-buttons hidden">
-                    <button id="next-button" class="btn primary-btn">Próxima Pergunta ▶</button>
-                    <!-- Removed back-to-start-quiz-button from HTML -->
-                </div>
-
                 <div class="question-card">
                     <p id="question-text" class="question-text"></p>
                     <div id="options-container" class="options-grid">
                         <!-- Opções serão inseridas aqui pelo JavaScript -->
                     </div>
+                </div>
+
+                <!-- Botões de navegação do quiz -->
+                <div id="quiz-navigation-buttons" class="quiz-navigation-buttons hidden">
+                    <button id="next-button" class="btn primary-btn">Próxima Pergunta ▶</button>
                 </div>
             </div>
 
@@ -958,9 +958,9 @@
 
         const quizNavigationButtons = document.getElementById('quiz-navigation-buttons'); // Container dos botões de navegação no quiz
 
-        // Elementos de Áudio
-        const correctSound = document.getElementById('correct-sound');
-        const incorrectSound = document.getElementById('incorrect-sound');
+        // Removido elementos de áudio
+        // const correctSound = document.getElementById('correct-sound');
+        // const incorrectSound = document.getElementById('incorrect-sound');
 
         // --- Funções de Inicialização e Carregamento ---
 
@@ -1107,7 +1107,7 @@
             feedbackOverlay.classList.add('active');
 
             if (isCorrect) {
-                correctSound.play();
+                // correctSound.play(); // Removido som
                 correctAnswersInLevel++;
                 // Apply correct styling after feedback
                 document.querySelectorAll('.option-btn').forEach(button => {
@@ -1125,7 +1125,7 @@
                 }, 1500); // Overlay visible for 1.5 seconds
 
             } else {
-                incorrectSound.play();
+                // incorrectSound.play(); // Removido som
                 // Apply incorrect styling after feedback
                 document.querySelectorAll('.option-btn').forEach(button => {
                     if (button.textContent === selectedOption) {
@@ -1222,7 +1222,6 @@
         });
         // Ao sair do jogo (pela seleção de nível ou tela de quiz), ele se reinicia desde o começo
         backToStartButton.addEventListener('click', restartGame);
-        // backToStartQuizButton.addEventListener('click', restartGame); // Removed this button and its event
         nextButton.addEventListener('click', nextQuestion);
         returnToLevelsButton.addEventListener('click', showLevelSelectionScreen);
         restartGameButton.addEventListener('click', restartGame);
