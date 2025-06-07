@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reprodução Bovina Quiz</title>
+    <!-- Fonte Inter do Google Fonts para consistência -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* style.css - Estilização do Quiz de Reprodução Bovina */
+
+        :root {
+            --primary-color: #0056b3; /* Azul escuro principal */
+            --secondary-color: #6cace4; /* Azul médio, para acentos */
+            --background-light: #e0f2f7; /* Azul muito claro, para fundo */
+            --card-background: #ffffff; /* Branco puro para cards */
+            --text-color-dark: #2c3e50; /* Azul escuro quase preto */
+            --text-color-light: #6a6a6a; /* Cinza médio */
+            --correct-feedback: #28a745; /* Verde para acerto (padrão) */
+            --incorrect-feedback: #dc3545; /* Vermelho para erro (padrão) */
+            --button-hover: #007bff; /* Azul médio para hover de botões primários */
+            --border-radius: 12px;
+            --shadow-light: 0 4px 10px rgba(0, 0, 0, 0.08);
+            --shadow-medium: 0 8px 20px rgba(0, 0, 0, 0.15);
+            --dark-blue-background: #1a2b3c; /* Azul muito escuro para a mensagem de desktop */
+        }
+
+        /* Base e Tipografia */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--background-light) 0%, #c1e7f0 100%); /* Gradiente de azuis */
+            color: var(--text-color-dark);
+            line-height: 1.6;
+        }
+
+        .main-game-wrapper {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        .container {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-medium);
+            padding: 2.5rem;
+            max-width: 500px; /* Max-width para simular tela de celular */
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.8em;
+            margin-bottom: 1.5rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: var(--text-color-dark);
+            font-size: 1.8em;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            color: var(--primary-color);
+            font-size: 1.4em;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        h4 {
+            color: var(--text-color-dark);
+            font-size: 1.1em;
+            margin-top: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-color-light);
+        }
+
+        /* Botões */
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 50px; /* Botões mais arredondados */
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .primary-btn {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 86, 179, 0.3);
+        }
+
+        .primary-btn:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 86, 179, 0.4);
+        }
+
+        .secondary-btn {
+            background-color: #f0f0f0;
+            color: var(--text-color-dark);
+            border: 1px solid #dcdcdc;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .secondary-btn:hover {
+            background-color: #e0e0e0;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Telas de Jogo */
+        .screen {
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .hidden {
+            display: none;
+            opacity: 0;
+        }
+
+        .active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Seleção de Nível */
+        .level-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Apenas uma coluna para mobile */
+            gap: 12px;
+            margin-top: 25px;
+            margin-bottom: 20px;
+        }
+
+        .level-button {
+            background-color: #e6f7ff; /* Azul muito claro */
+            color: var(--primary-color);
+            padding: 18px;
+            border-radius: var(--border-radius);
+            font-size: 1.2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            box-shadow: var(--shadow-light);
+            text-align: center;
+        }
+
+        .level-button:hover:not(.locked) {
+            background-color: #cceeff;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .level-button.locked {
+            background-color: #e8e8e8; /* Cinza para bloqueado */
+            color: #b0b0b0;
+            cursor: not-allowed;
+            filter: grayscale(100%);
+            box-shadow: none;
+        }
+
+        .level-button.locked:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Estilo do Quiz */
+        .header-quiz {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: #f0f3f5; /* Fundo mais claro para cabeçalho do quiz */
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .level-topic {
+            font-size: 1em;
+        }
+
+        .question-counter {
+            font-size: 0.9em;
+            color: var(--text-color-light);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            height: 10px;
+            overflow: hidden;
+            margin-bottom: 25px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+            transition: width 0.4s ease-out;
+        }
+
+        .question-card {
+            background-color: var(--card-background);
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-light);
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            margin-bottom: 25px;
+            color: var(--text-color-dark);
+            font-weight: 600;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background-color: #f8f8f8;
+            color: var(--text-color-dark);
+            border: 2px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .option-btn:hover:not(.disabled) {
+            background-color: #eef5fa; /* Azul claro para hover de opção */
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .option-btn.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Animações de Feedback */
+        @keyframes pulse-green {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            50% { transform: translateX(4px); }
+            75% { transform: translateX(-4px); }
+            100% { transform: translateX(0); }
+        }
+
+        /* Feedback Overlay */
+        .feedback-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 30px 40px;
+            border-radius: var(--border-radius);
+            font-size: 2.2em; /* Tamanho maior para destaque */
+            font-weight: 700;
+            color: white;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            z-index: 1000; /* Garante que fique acima de tudo */
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            min-width: 250px;
+            pointer-events: none; /* Permite cliques através quando hidden */
+        }
+
+        .feedback-overlay.correct {
+            background-color: var(--correct-feedback);
+        }
+
+        .feedback-overlay.incorrect {
+            background-color: var(--incorrect-feedback);
+        }
+
+        .feedback-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Removed Explanation Overlay CSS as it's no longer used */
+
+        /* Navigation buttons - Improved Layout */
+        .quiz-navigation-buttons {
+            display: flex;
+            flex-direction: column; /* Stack buttons vertically for mobile */
+            gap: 15px; /* Spacing between buttons */
+            margin-top: 30px; /* More space from question card */
+            width: 100%;
+            align-items: center; /* Center align buttons */
+        }
+
+        .quiz-navigation-buttons .btn {
+            width: 80%; /* Make buttons wider for easier tap */
+            max-width: 280px; /* Constrain max width for larger screens */
+            padding: 16px 20px; /* Larger padding for better touch target */
+            font-size: 1.1em; /* Slightly larger font */
+            border-radius: 10px; /* Slightly less rounded than 50px, more modern for blocks */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .quiz-navigation-buttons .primary-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .quiz-navigation-buttons .primary-btn:hover {
+            background-color: var(--button-hover);
+        }
+
+        .quiz-navigation-buttons .secondary-btn {
+            background-color: #e0e0e0;
+            color: var(--text-color-dark);
+            border: 1px solid #c0c0c0;
+        }
+        .quiz-navigation-buttons .secondary-btn:hover {
+            background-color: #d0d0d0;
+        }
+
+        .tip-content {
+            background-color: #e0f7fa; /* Azul claro para dicas */
+            border-left: 5px solid var(--secondary-color);
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+            font-style: italic;
+            color: #555;
+            text-align: left;
+            box-shadow: inset 0 1px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Tela Final do Nível / Jogo */
+        #level-end-screen, #game-end-screen {
+            padding: 30px;
+        }
+
+        .unlocked-content-section {
+            background-color: #e6f7ff; /* Azul claro para conteúdo desbloqueado */
+            border: 2px dashed var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin: 30px auto;
+            text-align: left;
+            max-width: 600px;
+            box-shadow: 0 4px 15px rgba(0, 86, 179, 0.1);
+        }
+
+        .small-text {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 20px;
+        }
+
+        .level-unlock-hint {
+            color: var(--incorrect-feedback); /* Vermelho */
+            font-weight: 700;
+            font-size: 0.9em;
+            margin-top: 5px; /* Espaço em relação ao texto acima */
+        }
+
+        /* Mensagem de Exclusividade para Desktop */
+        .desktop-message {
+            display: none; /* Escondido por padrão em mobile */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--dark-blue-background); /* Fundo azul escuro */
+            color: white;
+            font-size: 1.6em;
+            font-weight: 600;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+            z-index: 2000; /* Acima de todo o jogo */
+            box-sizing: border-box;
+            flex-direction: column;
+            line-height: 1.4;
+        }
+
+        .desktop-message p {
+            margin-bottom: 20px;
+            max-width: 600px;
+            color: #ecf0f1;
+        }
+
+        /* Media Query para exibir a mensagem de desktop e esconder o jogo */
+        @media (min-width: 768px) { /* Breakpoint para tablets e desktops */
+            .desktop-message {
+                display: flex; /* Mostra a mensagem em telas maiores */
+            }
+            .main-game-wrapper {
+                display: none; /* Esconde o jogo em telas maiores */
+            }
+        }
+
+        /* --- Ajustes para telas muito pequenas (mobile) --- */
+        @media (max-width: 576px) { /* Ex: 360px a 575px de largura */
+            .container {
+                padding: 1.2rem; /* Reduz o padding geral do container */
+            }
+
+            h1 {
+                font-size: 2.4em; /* Ajusta o tamanho do título principal */
+            }
+
+            h2 {
+                font-size: 1.6em; /* Ajusta o tamanho dos subtítulos */
+            }
+
+            .question-text {
+                font-size: 1.1em; /* Ajusta o tamanho do texto da pergunta */
+            }
+
+            .btn, .option-btn, .level-button {
+                font-size: 0.95em; /* Ajusta o tamanho da fonte dos botões */
+                padding: 12px 20px; /* Reduz o padding dos botões */
+            }
+
+            .level-button {
+                padding: 16px; /* Ajusta o padding do botão de nível */
+            }
+
+            .level-grid, .options-grid {
+                gap: 10px; /* Reduz um pouco o espaçamento entre os botões */
+            }
+
+            .feedback-overlay {
+                font-size: 1.8em; /* Ajusta o tamanho da fonte do overlay de feedback */
+                padding: 20px 30px;
+            }
+
+            .quiz-navigation-buttons .btn {
+                width: 95%; /* Wider buttons for very small screens */
+                padding: 14px 15px; /* Adjust padding */
+                font-size: 0.9em; /* Smaller font for tiny screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mensagem de Exclusividade para Desktop (visível apenas em telas maiores) -->
+    <div id="desktop-message" class="desktop-message">
+        <p>Este jogo é exclusivo para dispositivos móveis.</p>
+        <p>Por favor, abra em um celular para uma melhor experiência.</p>
+    </div>
+
+    <!-- Wrapper principal do jogo (escondido em desktop) -->
+    <div class="main-game-wrapper" id="main-game-wrapper">
+        <div class="container">
+            <!-- Tela Inicial -->
+            <div id="start-screen" class="screen active">
+                <!-- Título removido daqui -->
+                <h2>Bem-vindo(a) ao Desafio da Reprodução Bovina!</h2>
+                <p>Prepare-se para testar seus conhecimentos e aprender tudo sobre a reprodução em vacas e touros. Avance pelos níveis, desbloqueie conteúdo exclusivo e torne-se um(a) verdadeiro(a) expert!</p>
+                <button id="start-button" class="btn primary-btn">Iniciar Jogo</button>
+            </div>
+
+            <!-- Tela de Seleção de Nível -->
+            <div id="level-selection-screen" class="screen hidden">
+                <h2>Selecione um Nível</h2>
+                <div id="level-buttons-container" class="level-grid">
+                    <!-- Botões de nível serão inseridos aqui pelo JavaScript -->
+                </div>
+                <button id="back-to-start-button" class="btn secondary-btn">Voltar ao Início</button>
+                <p class="small-text">Complete os níveis para desbloquear os próximos!</p>
+                <p class="level-unlock-hint">Você precisa acertar pelo menos 70% das perguntas para passar de nível!</p>
+            </div>
+
+            <!-- Tela do Quiz -->
+            <div id="quiz-screen" class="screen hidden">
+                <div class="header-quiz">
+                    <span id="level-topic-display" class="level-topic"></span>
+                    <span id="question-counter" class="question-counter">Pergunta 1/10</span>
+                </div>
+
+                <div class="progress-bar-container">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+
+                <div class="question-card">
+                    <p id="question-text" class="question-text"></p>
+                    <div id="options-container" class="options-grid">
+                        <!-- Opções serão inseridas aqui pelo JavaScript -->
+                    </div>
+                    <button id="tip-button" class="btn secondary-btn hidden">🤔 Dica</button>
+                    <p id="tip-content" class="tip-content hidden"></p>
+                </div>
+
+                <!-- Botões de navegação do quiz -->
+                <div id="quiz-navigation-buttons" class="quiz-navigation-buttons hidden">
+                    <button id="back-to-start-quiz-button" class="btn secondary-btn">Voltar ao Início</button>
+                    <button id="next-button" class="btn primary-btn">Próxima Pergunta ▶</button>
+                </div>
+            </div>
+
+            <!-- Tela Final do Nível -->
+            <div id="level-end-screen" class="screen hidden">
+                <h2 id="level-end-title"></h2>
+                <p id="level-end-score"></p>
+                <div id="unlocked-content-section" class="unlocked-content-section hidden">
+                    <h3>Conteúdo Desbloqueado! 🔓</h3>
+                    <h4 id="unlocked-content-title"></h4>
+                    <p id="unlocked-content-description"></p>
+                    <!-- Imagem de conteúdo desbloqueado removida -->
+                </div>
+                <button id="return-to-levels-button" class="btn primary-btn">Voltar para Níveis</button>
+            </div>
+
+            <!-- Tela Final do Jogo -->
+            <div id="game-end-screen" class="screen hidden">
+                <h2>🎉 Parabéns, Desbravador da Reprodução! 🎉</h2>
+                <p>Você completou todos os níveis do Quiz de Reprodução Bovina! Seu conhecimento é impressionante. Continue aprendendo e aplicando o que aprendeu!</p>
+                <button id="restart-game-button" class="btn primary-btn">Jogar Novamente</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Overlay (sempre visível, mas hidden por padrão) -->
+    <div id="feedback-overlay" class="feedback-overlay hidden">
+        <span id="overlay-message"></span>
+    </div>
+
+    <!-- Explanation Overlay - REMOVED from HTML as it's no longer used -->
+
+    <!-- Elementos de Áudio para Feedback -->
+    <audio id="correct-sound" src="https://www.soundjay.com/buttons/sounds/button-7.mp3" preload="auto"></audio>
+    <audio id="incorrect-sound" src="https://www.soundjay.com/buttons/sounds/button-10.mp3" preload="auto"></audio>
+
+    <script>
+        // data.js - Conteúdo do Quiz de Reprodução Bovina
+
+        const quizData = [
+            // Nível 1 – Fundamentos
+            {
+                level: 1,
+                topic: "Fundamentos da Reprodução Bovina",
+                questions: [
+                    {
+                        question: "Qual o principal órgão reprodutor feminino bovino responsável pela produção de óvulos e hormônios?",
+                        options: ["Útero", "Oviduto", "Ovário", "Vagina"],
+                        answer: "Ovário",
+                        explanation: "O ovário é a gônada feminina primária, responsável pela oogenese (produção de óvulos) e pela síntese de hormônios esteroides sexuais, como estrógeno e progesterona.",
+                        tip: "Pense no órgão que tem função dupla: gameta e hormônio."
+                    },
+                    {
+                        question: "Qual a estrutura do trato reprodutor masculino bovino que armazena e matura os espermatozoides?",
+                        options: ["Testículo", "Ducto deferente", "Epidídimo", "Glândulas acessórias"],
+                        answer: "Epidídimo",
+                        explanation: "O epidídimo é um tubo enovelado localizado na superfície do testículo, onde os espermatozoides adquirem motilidade progressiva e capacidade de fertilização, e são armazenados.",
+                        tip: "É um local de 'aperfeiçoamento' e 'guarda' dos gametas masculinos."
+                    },
+                    {
+                        question: "Em qual fase do ciclo estral bovino a vaca apresenta os sinais mais evidentes de cio e aceita a monta?",
+                        options: ["Proestro", "Estro", "Metaestro", "Diestro"],
+                        answer: "Estro",
+                        explanation: "O estro, ou cio, é a fase do ciclo em que a fêmea está receptiva sexualmente ao macho, impulsionada pelos altos níveis de estrógeno.",
+                        tip: "Esta fase é sinônimo de 'receptividade sexual'."
+                    },
+                    {
+                        question: "Qual o processo de formação dos gametas femininos (óvulos) nas gônadas?",
+                        options: ["Espermatogênese", "Gametogênese", "Oogenese", "Mitose"],
+                        answer: "Oogenese",
+                        explanation: "A oogenese é o processo de desenvolvimento e maturação dos ovócitos primários em óvulos maduros, que ocorre nos ovários.",
+                        tip: "O prefixo 'oo' refere-se ao óvulo."
+                    },
+                    {
+                        question: "Qual a principal característica da fase de diestro no ciclo estral bovino?",
+                        options: ["Alta concentração de estrógeno", "Presença de corpo lúteo funcional", "Comportamento de cio intenso", "Início do desenvolvimento folicular"],
+                        answer: "Presença de corpo lúteo funcional",
+                        explanation: "O diestro é caracterizado pela presença do corpo lúteo (CL) funcional, que produz progesterona, mantendo o útero pronto para uma possível gestação e inibindo o estro.",
+                        tip: "É a fase mais longa do ciclo, dominada por um hormônio de 'manutenção'."
+                    },
+                    {
+                        question: "Qual a principal função das glândulas seminais no sistema reprodutor do touro?",
+                        options: ["Produzir espermatozoides", "Armazenar espermatozoides", "Produzir fluido seminal rico em nutrientes", "Transportar espermatozoides"],
+                        answer: "Produzir fluido seminal rico em nutrientes",
+                        tip: "Elas adicionam 'alimento' e 'volume' ao ejaculado."
+                    },
+                    {
+                        question: "Onde ocorre a fecundação na fêmea bovina?",
+                        options: ["Útero", "Ovário", "Vagina", "Oviduto (Tuba Uterina)"],
+                        answer: "Oviduto (Tuba Uterina)",
+                        explanation: "A fecundação, que é a união do espermatozoide com o óvulo, ocorre tipicamente na ampola do oviduto (tuba uterina), após a ovulação.",
+                        tip: "É o 'caminho' que o óvulo percorre e encontra o espermatozoide."
+                    },
+                    {
+                        question: "Qual hormônio é responsável pelos sinais de cio na vaca?",
+                        options: ["Progesterona", "Testosterona", "FSH", "Estrógeno"],
+                        answer: "Estrógeno",
+                        explanation: "O estrógeno, produzido pelos folículos ovarianos maduros, é o principal hormônio responsável por induzir o comportamento de estro (cio) e a receptividade sexual.",
+                        tip: "Pense no hormônio que prepara o corpo para a reprodução e mostra os 'sinais'."
+                    },
+                    {
+                        question: "O que é o folículo ovariano na vaca?",
+                        options: ["Uma glândula endócrina", "A estrutura que abriga o ovócito em desenvolvimento", "Um ducto reprodutor", "Uma parte do útero"],
+                        answer: "A estrutura que abriga o ovócito em desenvolvimento",
+                        explanation: "O folículo ovariano é uma estrutura esférica dentro do ovário que contém e nutre o ovócito, além de produzir estrógeno. Ele cresce e se desenvolve até a ovulação.",
+                        tip: "É o 'berço' do gameta feminino antes da liberação."
+                    },
+                    {
+                        question: "Qual a principal função do útero na reprodução bovina?",
+                        options: ["Produção de óvulos", "Armazenamento de espermatozoides", "Desenvolvimento fetal e implantação do embrião", "Produção de hormônios"],
+                        answer: "Desenvolvimento fetal e implantação do embrião",
+                        explanation: "O útero é o órgão onde o embrião se implanta após a fecundação e se desenvolve durante toda a gestação, fornecendo suporte, nutrição e proteção ao feto.",
+                        tip: "É o 'local de moradia' e crescimento do bezerro durante a gestação."
+                    }
+                ],
+                unlockedContent: {
+                    title: "Guia Básico de Anatomia Reprodutiva",
+                    description: "Parabéns! Você desbloqueou um guia visual sobre a anatomia reprodutiva de vacas e touros. Entender a estrutura é o primeiro passo para dominar a fisiologia!",
+                }
+            },
+            // Nível 2 – Processos Reprodutivos
+            {
+                level: 2,
+                topic: "Processos Reprodutivos e Fisiologia",
+                questions: [
+                    {
+                        question: "Qual o evento que marca o início do metaestro após o estro, essencial para a formação do corpo lúteo?",
+                        options: ["Pico de FSH", "Formação do corpo lúteo", "Ovulação", "Regressão do corpo lúteo"],
+                        answer: "Ovulação",
+                        explanation: "A ovulação é a liberação do ovócito do folículo ovariano. Após a ovulação, as células foliculares remanescentes formam o corpo lúteo, marcando o início do metaestro.",
+                        tip: "É o ponto de transição do ciclo, quando o gameta feminino é liberado."
+                    },
+                    {
+                        question: "Quais são os principais sinais de estro (cio) na vaca, que indicam o momento ideal para a inseminação?",
+                        options: ["Aumento da ingestão de alimentos, isolamento", "Cauda erguida, secreção vulvar, montas de outras vacas", "Diminuição da produção de leite, agressividade", "Deitar-se frequentemente, mugidos baixos"],
+                        answer: "Cauda erguida, secreção vulvar, montas de outras vacas",
+                        explanation: "Os sinais mais confiáveis de estro incluem a aceitação de monta por outras vacas, cauda erguida, vocalização, inquietação e presença de muco cristalino na vulva.",
+                        tip: "Pense nos comportamentos que a vaca demonstra quando está pronta para acasalar."
+                    },
+                    {
+                        question: "Após a ovulação, qual estrutura se forma a partir do folículo rompido e produz progesterona?",
+                        options: ["Folículo secundário", "Corpo albicans", "Corpo lúteo", "Cisto folicular"],
+                        answer: "Corpo lúteo",
+                        explanation: "O corpo lúteo (CL) se forma a partir das células do folículo ovariano após a ovulação. Ele é crucial para a manutenção da gestação, produzindo progesterona.",
+                        tip: "É a estrutura que domina a segunda metade do ciclo estral."
+                    },
+                    {
+                        question: "Qual a função da cauda do espermatozoide na fecundação bovina?",
+                        options: ["Armazenar DNA", "Produzir energia", "Movimentar o espermatozoide", "Reconhecer o óvulo"],
+                        answer: "Movimentar o espermatozoide",
+                        explanation: "A cauda (flagelo) do espermatozoide é responsável pela sua motilidade, permitindo que ele se desloque através do trato reprodutor feminino para alcançar e fertilizar o óvulo.",
+                        tip: "Pense na parte do espermatozoide que dá a 'propulsão'."
+                    },
+                    {
+                        question: "O que é a capacidade de fertilização adquirida pelos espermatozoides no trato reprodutor feminino?",
+                        options: ["Acrosomo", "Capacitação", "Hipermotilidade", "Reação acrossômica"],
+                        answer: "Capacitação",
+                        explanation: "A capacitação espermática é um conjunto de alterações fisiológicas que os espermatozoides sofrem no trato reprodutor feminino, tornando-os aptos para a fecundação.",
+                        tip: "É um 'amadurecimento final' para a função de fertilização."
+                    },
+                    {
+                        question: "Qual o período ideal para a inseminação artificial em vacas após a observação do cio?",
+                        options: ["Imediatamente após o cio", "12-18 horas após o início do cio", "24-30 horas após o início do cio", "No dia seguinte ao fim do cio"],
+                        answer: "12-18 horas após o início do cio",
+                        explanation: "A 'regra AM/PM' sugere inseminar no período da tarde vacas que demonstraram cio pela manhã, e pela manhã as que demonstraram cio à tarde, visando a ovulação.",
+                        tip: "Não é nem muito cedo, nem muito tarde; há um 'janela' ideal."
+                    },
+                    {
+                        question: "O que é a Reação Acrossômica e por que ela é importante para a fecundação?",
+                        options: ["A formação da cauda do espermatozoide", "A liberação de enzimas para penetrar o óvulo", "O movimento do espermatozoide no oviduto", "A junção do espermatozoide ao útero"],
+                        answer: "A liberação de enzimas para penetrar o óvulo",
+                        explanation: "A reação acrossômica é a liberação de enzimas da cabeça do espermatozoide que digerem as camadas externas do óvulo (zona pelúcida e corona radiata), permitindo a penetração.",
+                        tip: "Pense em uma 'explosão' na cabeça do espermatozoide para abrir caminho."
+                    },
+                    {
+                        question: "Qual a principal função do muco cervical produzido durante o estro na vaca?",
+                        options: ["Proteger contra infecções", "Nutrir o embrião", "Facilitar o transporte de espermatozoides", "Regular a temperatura uterina"],
+                        answer: "Facilitar o transporte de espermatozoides",
+                        explanation: "Durante o estro, o muco cervical se torna mais aquoso e filamentoso, criando um ambiente favorável e um 'canal' para o transporte eficiente dos espermatozoides em direção ao oviduto.",
+                        tip: "Ele age como uma 'via expressa' para os espermatozoides."
+                    },
+                    {
+                        question: "O que é luteólise e qual hormônio a desencadeia na vaca não gestante?",
+                        options: ["Formação do corpo lúteo, LH", "Regressão do corpo lúteo, PGF2α", "Ovulação, FSH", "Desenvolvimento folicular, Estrógeno"],
+                        answer: "Regressão do corpo lúteo, PGF2α",
+                        explanation: "A luteólise é a regressão do corpo lúteo, levando à queda da progesterona. Em vacas não gestantes, é desencadeada pela Prostaglandina F2α (PGF2α) produzida pelo útero.",
+                        tip: "É o processo de 'desaparecimento' do corpo lúteo, permitindo um novo ciclo."
+                    },
+                    {
+                        question: "Qual o hormônio que estimula o desenvolvimento dos folículos ovarianos na vaca?",
+                        options: ["LH", "Progesterona", "FSH", "Estrógeno"],
+                        answer: "FSH",
+                        explanation: "O Hormônio Folículo Estimulante (FSH) é produzido pela hipófise anterior e atua diretamente nos ovários, promovendo o crescimento e desenvolvimento dos folículos ovarianos.",
+                        tip: "Pense no hormônio que dá o 'pontapé inicial' para a formação de novos folículos."
+                    }
+                ],
+                unlockedContent: {
+                    title: "Desvendando o Ciclo Estral Bovino",
+                    description: "Excelente! Você desbloqueou um material aprofundado sobre o ciclo estral e os processos fisiológicos da reprodução. Entenda cada fase e sua importância!",
+                }
+            },
+            // Nível 3 – FIV e Embriologia
+            {
+                level: 3,
+                topic: "Reprodução Assistida e Embriologia",
+                questions: [
+                    {
+                        question: "O que é 'mórula' no desenvolvimento embrionário bovino?",
+                        options: ["Um ovócito recém-ovulado", "Uma massa compacta de células embrionárias", "A fase de implantação no útero", "O embrião em estágio de blastocisto"],
+                        answer: "Uma massa compacta de células embrionárias",
+                        explanation: "A mórula é um estágio inicial do desenvolvimento embrionário, caracterizada por uma massa compacta de células (blastômeros) que se assemelha a uma 'amora'.",
+                        tip: "O nome vem do latim e significa 'pequena amora'."
+                    },
+                    {
+                        question: "Na Fertilização In Vitro (FIV), qual o principal objetivo da superovulação da doadora?",
+                        options: ["Aumentar a qualidade dos oócitos", "Produzir múltiplos folículos e oócitos", "Reduzir o tempo de gestação", "Evitar a luteólise"],
+                        answer: "Produzir múltiplos folículos e oócitos",
+                        tip: "O objetivo é 'colher' mais de um ovócito de uma vez."
+                    },
+                    {
+                        question: "Qual o estágio embrionário que precede o blastocisto, caracterizado pela compactação das células?",
+                        options: ["Zigoto", "2 células", "Mórula", "Gástrula"],
+                        answer: "Mórula",
+                        explanation: "Após a fase de 8-16 células, os blastômeros se compactam para formar a mórula, que é um estágio crucial antes da formação da cavidade do blastocisto.",
+                        tip: "É o estágio 'sólido' antes de se tornar 'oco'."
+                    },
+                    {
+                        question: "O que é um embrião classificado como 'Grau 1' na FIV bovina?",
+                        options: ["Embrião de baixa qualidade", "Embrião em estágio inicial de desenvolvimento", "Embrião de excelente qualidade, viável para transferência", "Embrião com alguma anomalia"],
+                        answer: "Embrião de excelente qualidade, viável para transferência",
+                        tip: "Pense na classificação 'A+' ou 'top de linha'."
+                    },
+                    {
+                        question: "Qual a função da 'zona pelúcida' no óvulo após a fecundação?",
+                        options: ["Nutrir o embrião", "Anexar o óvulo ao oviduto", "Prevenir a polispermia (entrada de múltiplos espermatozoides)", "Produzir hormônios"],
+                        answer: "Prevenir a polispermia (entrada de múltiplos espermatozoides)",
+                        tip: "É uma 'barreira de segurança' para o óvulo fertilizado."
+                    },
+                    {
+                        question: "O que significa 'blastocisto' no contexto da embriologia bovina?",
+                        options: ["A primeira divisão celular do zigoto", "Um óvulo maduro", "Um embrião com cavidade interna e massa celular interna", "Uma massa de espermatozoides"],
+                        answer: "Um embrião com cavidade interna e massa celular interna",
+                        tip: "É o estágio ideal para a transferência de embriões e o nome indica uma 'bolha' (cavidade)."
+                    },
+                    {
+                        question: "Em qual fase do desenvolvimento embrionário o embrião bovino é tipicamente transferido para a receptora na FIV?",
+                        options: ["Zigoto", "Mórula", "Blastocisto", "Gástrula"],
+                        answer: "Blastocisto",
+                        tip: "É o estágio mais 'maduro' para o procedimento de transferência."
+                    },
+                    {
+                        question: "Qual a importância da 'morfologia de oócitos' na FIV bovina?",
+                        options: ["Determinar o sexo do futuro embrião", "Apenas para fins de pesquisa", "Estimular a ovulação", "Prever a capacidade de desenvolvimento e fertilização"],
+                        answer: "Prever a capacidade de desenvolvimento e fertilização",
+                        tip: "É como uma 'seleção' inicial para garantir a qualidade."
+                    },
+                    {
+                        question: "Qual técnica de reprodução assistida envolve a coleta de oócitos diretamente dos ovários e a fertilização em laboratório?",
+                        options: ["Inseminação Artificial", "Transferência de Embriões", "FIV (Fertilização In Vitro)", "Sincronização de Cio"],
+                        answer: "FIV (Fertilização In Vitro)",
+                        tip: "É a 'bebê de proveta' no mundo bovino."
+                    },
+                    {
+                        question: "No desenvolvimento embrionário, o que é o 'zigoto'?",
+                        options: ["O óvulo antes da fecundação", "O espermatozoide", "A célula resultante da união do óvulo e espermatozoide", "Um embrião de 8 células"],
+                        answer: "A célula resultante da união do óvulo e espermatozoide",
+                        tip: "É o 'ponto zero' do desenvolvimento embrionário."
+                    }
+                ],
+                unlockedContent: {
+                    title: "Desvendando o Mundo da FIV e Embriologia",
+                    description: "Fantástico! Você agora tem acesso a um conteúdo exclusivo sobre Fertilização In Vitro e os fascinantes estágios do desenvolvimento embrionário bovino.",
+                }
+            },
+            // Nível 4 – Hormonal e Gestacional
+            {
+                level: 4,
+                topic: "Regulação Hormonal e Gestação",
+                questions: [
+                    {
+                        question: "Qual hormônio é essencial para a manutenção da gestação em bovinos, sendo produzido pelo corpo lúteo?",
+                        options: ["Estrógeno", "LH", "FSH", "Progesterona"],
+                        answer: "Progesterona",
+                        tip: "É o hormônio da 'gravidez'."
+                    },
+                    {
+                        question: "Qual o hormônio responsável por induzir o pico de LH e, consequentemente, a ovulação?",
+                        options: ["FSH", "Progesterona", "GnRH", "PGF2α"],
+                        answer: "GnRH",
+                        tip: "É o 'maestro' que regula a hipófise para liberar os hormônios ovulatórios."
+                    },
+                    {
+                        question: "Qual o período médio de gestação em vacas?",
+                        options: ["180 dias", "210 dias", "280 dias", "320 dias"],
+                        answer: "280 dias",
+                        tip: "É o tempo em que o bezerro fica no útero."
+                    },
+                    {
+                        question: "Qual o principal método para diagnóstico precoce de gestação em bovinos na fazenda?",
+                        options: ["Observação do comportamento", "Palpação retal", "Análise de urina", "Exame de sangue para FSH"],
+                        answer: "Palpação retal",
+                        tip: "É um método 'manual' de detecção."
+                    },
+                    {
+                        question: "Qual hormônio é utilizado para induzir a luteólise e a regressão do corpo lúteo em programas de sincronização de cio?",
+                        options: ["Progesterona", "Estrógeno", "PGF2α", "Oxitocina"],
+                        answer: "PGF2α",
+                        tip: "É o hormônio que 'finaliza' a fase lútea para iniciar um novo ciclo."
+                    },
+                    {
+                        question: "Qual a fase do parto (parturição) em que ocorre a expulsão do feto?",
+                        options: ["Fase de preparação", "Fase de dilatação", "Fase de expulsão", "Fase de eliminação das membranas fetais"],
+                        answer: "Fase de expulsão",
+                        tip: "É a fase mais 'visível' do parto."
+                    },
+                    {
+                        question: "Qual hormônio é liberado em resposta à sucção do bezerro durante a amamentação e causa a ejeção do leite?",
+                        options: ["Prolactina", "Estrógeno", "Oxitocina", "Progesterona"],
+                        answer: "Oxitocina",
+                        tip: "É o hormônio do 'amor' e da 'amamentação'."
+                    },
+                    {
+                        question: "O que é 'retenção de placenta' em bovinos?",
+                        options: ["A placenta se solta muito rápido", "A placenta não é eliminada após o parto em tempo hábil", "Inflamação da placenta", "Desenvolvimento anormal da placenta"],
+                        answer: "A placenta não é eliminada após o parto em tempo hábil",
+                        tip: "É quando a 'limpeza' pós-parto não acontece naturalmente."
+                    },
+                    {
+                        question: "Qual a importância da 'prolactina' na reprodução bovina?",
+                        options: ["Induz o cio", "Causa ovulação", "Promove o crescimento do corpo lúteo", "Estimula a lactação e inibe a ciclicidade pós-parto"],
+                        answer: "Estimula a lactação e inibe a ciclicidade pós-parto",
+                        tip: "Está ligada à 'produção de leite' e à 'pausa' reprodutiva."
+                    },
+                    {
+                        question: "O que é 'involução uterina' e quando ela ocorre?",
+                        options: ["Crescimento do útero durante a gestação", "Diminuição do útero para o tamanho pré-gestacional após o parto", "Inflamação do útero", "Pro lapso do útero"],
+                        answer: "Diminuição do útero para o tamanho pré-gestacional após o parto",
+                        tip: "É a 'recuperação' do útero após a gestação."
+                    }
+                ],
+                unlockedContent: {
+                    title: "Guia Avançado: Hormônios e Gestação Bovina",
+                    description: "Incrível! Você se tornou um especialista em hormônios reprodutivos e nas fases da gestação. Esse conhecimento é chave para o manejo da reprodução bovina!",
+                }
+            }
+        ];
+
+        // Conteúdo de introdução/conclusão do jogo, se necessário.
+        const gameIntro = {
+            title: "Bem-vindo ao Quiz de Reprodução Bovina!",
+            description: "Prepare-se para testar seus conhecimentos e aprender tudo sobre a reprodução em bovinos. Avance pelos níveis, desbloqueie conteúdo exclusivo e torne-se um expert!"
+        };
+
+        const gameEnd = {
+            title: "Parabéns, Desbravador da Reprodução!",
+            description: "Você completou todos os níveis do Quiz de Reprodução Bovina! Seu conhecimento é impressionante. Continue aprendendo e aplicando o que aprendeu!"
+        };
+    </script>
+    <script>
+        // script.js - Lógica do Quiz de Reprodução Bovina
+
+        // Variáveis de Estado do Jogo
+        let currentLevelIndex = 0;
+        let currentQuestionIndex = 0;
+        let correctAnswersInLevel = 0;
+        let unlockedLevels = []; // Array para armazenar os índices dos níveis desbloqueados
+        const questionsPerLevel = 10; // Número de perguntas por nível
+
+        // Elementos do DOM
+        const mainGameWrapper = document.getElementById('main-game-wrapper'); // Wrapper principal do jogo
+        const desktopMessage = document.getElementById('desktop-message'); // Mensagem de desktop
+
+        const startScreen = document.getElementById('start-screen');
+        const levelSelectionScreen = document.getElementById('level-selection-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const levelEndScreen = document.getElementById('level-end-screen');
+        const gameEndScreen = document.getElementById('game-end-screen');
+
+        const startButton = document.getElementById('start-button');
+        const levelButtonsContainer = document.getElementById('level-buttons-container');
+        const backToStartButton = document.getElementById('back-to-start-button'); // Botão "Voltar ao Início" na seleção de nível
+
+        const levelTopicDisplay = document.getElementById('level-topic-display');
+        const questionCounter = document.getElementById('question-counter');
+        const progressBar = document.getElementById('progress-bar');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const tipButton = document.getElementById('tip-button');
+        const tipContent = document.getElementById('tip-content');
+        
+        const nextButton = document.getElementById('next-button');
+        const backToStartQuizButton = document.getElementById('back-to-start-quiz-button'); // Botão "Voltar ao Início" no quiz
+
+        const levelEndTitle = document.getElementById('level-end-title');
+        const levelEndScore = document.getElementById('level-end-score');
+        const unlockedContentSection = document.getElementById('unlocked-content-section');
+        const unlockedContentTitle = document.getElementById('unlocked-content-title');
+        const unlockedContentDescription = document.getElementById('unlocked-content-description');
+        const returnToLevelsButton = document.getElementById('return-to-levels-button');
+        const restartGameButton = document.getElementById('restart-game-button');
+
+        const feedbackOverlay = document.getElementById('feedback-overlay'); // Elemento de overlay de feedback
+        const overlayMessage = document.getElementById('overlay-message'); // Mensagem dentro do overlay
+
+        // Explanation Overlay elements are removed as explanation is removed
+        // const explanationOverlay = document.getElementById('explanation-overlay');
+        // const explanationOverlayText = document.getElementById('explanation-overlay-text');
+        // const explanationCloseButton = document.getElementById('explanation-close-button');
+        const quizNavigationButtons = document.getElementById('quiz-navigation-buttons'); // Container dos botões de navegação no quiz
+
+        // Elementos de Áudio
+        const correctSound = document.getElementById('correct-sound');
+        const incorrectSound = document.getElementById('incorrect-sound');
+
+        // --- Funções de Inicialização e Carregamento ---
+
+        /**
+         * Carrega o progresso salvo no localStorage.
+         */
+        function loadProgress() {
+            const savedUnlockedLevels = localStorage.getItem('unlockedLevels');
+            if (savedUnlockedLevels) {
+                unlockedLevels = JSON.parse(savedUnlockedLevels);
+            } else {
+                // Se não houver progresso salvo, desbloqueia o primeiro nível
+                unlockedLevels = [0];
+            }
+        }
+
+        /**
+         * Salva o progresso atual no localStorage.
+         */
+        function saveProgress() {
+            localStorage.setItem('unlockedLevels', JSON.stringify(unlockedLevels));
+        }
+
+        /**
+         * Exibe a tela inicial do jogo.
+         */
+        function showStartScreen() {
+            startScreen.classList.add('active');
+            startScreen.classList.remove('hidden');
+            levelSelectionScreen.classList.add('hidden');
+            levelSelectionScreen.classList.remove('active');
+            quizScreen.classList.add('hidden');
+            quizScreen.classList.remove('active');
+            levelEndScreen.classList.add('hidden');
+            levelEndScreen.classList.remove('active');
+            gameEndScreen.classList.add('hidden');
+            gameEndScreen.classList.remove('active');
+        }
+
+        /**
+         * Exibe a tela de seleção de níveis e popula os botões de nível.
+         */
+        function showLevelSelectionScreen() {
+            startScreen.classList.add('hidden');
+            startScreen.classList.remove('active');
+            levelSelectionScreen.classList.add('active');
+            levelSelectionScreen.classList.remove('hidden');
+            quizScreen.classList.add('hidden');
+            quizScreen.classList.remove('active');
+            levelEndScreen.classList.add('hidden');
+            levelEndScreen.classList.remove('active');
+            gameEndScreen.classList.add('hidden');
+            gameEndScreen.classList.remove('active');
+
+            levelButtonsContainer.innerHTML = ''; // Limpa botões existentes
+
+            quizData.forEach((levelData, index) => {
+                const levelButton = document.createElement('button');
+                levelButton.classList.add('btn', 'level-button');
+                levelButton.textContent = `Nível ${levelData.level} - ${levelData.topic}`;
+                levelButton.dataset.levelIndex = index;
+
+                // Verifica se o nível está desbloqueado
+                if (unlockedLevels.includes(index)) {
+                    levelButton.addEventListener('click', () => loadLevel(index));
+                } else {
+                    levelButton.classList.add('locked');
+                    levelButton.textContent += ' 🔒'; // Adiciona cadeado para níveis bloqueados
+                }
+                levelButtonsContainer.appendChild(levelButton);
+            });
+        }
+
+        /**
+         * Carrega um nível específico do quiz.
+         * @param {number} levelIndex - O índice do nível a ser carregado.
+         */
+        function loadLevel(levelIndex) {
+            currentLevelIndex = levelIndex;
+            currentQuestionIndex = 0;
+            correctAnswersInLevel = 0;
+
+            levelSelectionScreen.classList.add('hidden');
+            levelSelectionScreen.classList.remove('active');
+            quizScreen.classList.add('active');
+            quizScreen.classList.remove('hidden');
+
+            displayQuestion();
+            updateProgressBar();
+        }
+
+        /**
+         * Exibe a pergunta atual no UI.
+         */
+        function displayQuestion() {
+            const currentLevel = quizData[currentLevelIndex];
+            const currentQuestion = currentLevel.questions[currentQuestionIndex];
+
+            levelTopicDisplay.textContent = `Nível ${currentLevel.level}: ${currentLevel.topic}`;
+            questionCounter.textContent = `Pergunta ${currentQuestionIndex + 1}/${questionsPerLevel}`;
+            questionText.textContent = currentQuestion.question;
+
+            optionsContainer.innerHTML = ''; // Limpa opções anteriores
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn');
+                button.textContent = option;
+                button.addEventListener('click', () => checkAnswer(option));
+                optionsContainer.appendChild(button);
+            });
+
+            // Resetar dicas e esconder overlays/botões de navegação
+            tipContent.classList.add('hidden');
+            tipContent.textContent = '';
+            feedbackOverlay.classList.add('hidden');
+            // explanationOverlay.classList.add('hidden'); // Removed as explanation is removed
+            quizNavigationButtons.classList.add('hidden'); // Garante que os botões de navegação estejam escondidos
+
+            // Exibir botão de dica se houver dica
+            if (currentQuestion.tip) {
+                tipButton.classList.remove('hidden');
+            } else {
+                tipButton.classList.add('hidden');
+            }
+
+            // Habilitar todas as opções e remover quaisquer estilos de feedback
+            document.querySelectorAll('.option-btn').forEach(button => {
+                button.classList.remove('disabled');
+                button.style.backgroundColor = ''; /* Remove inline style for background */
+                button.style.color = ''; /* Remove inline style for color */
+            });
+        }
+
+        /**
+         * Verifica a resposta selecionada pelo jogador.
+         * @param {string} selectedOption - A opção selecionada pelo jogador.
+         */
+        function checkAnswer(selectedOption) {
+            const currentQuestion = quizData[currentLevelIndex].questions[currentQuestionIndex];
+            const isCorrect = selectedOption === currentQuestion.answer;
+
+            // Desabilitar todas as opções imediatamente
+            document.querySelectorAll('.option-btn').forEach(button => {
+                button.classList.add('disabled');
+            });
+
+            // Esconder os botões de navegação antes de mostrar feedback
+            quizNavigationButtons.classList.add('hidden');
+
+            // Exibir feedback no overlay
+            feedbackOverlay.classList.remove('hidden');
+            overlayMessage.textContent = isCorrect ? "✅ Correto!" : "❌ Incorreto!";
+            feedbackOverlay.classList.add(isCorrect ? 'correct' : 'incorrect');
+            feedbackOverlay.classList.add('active');
+
+            if (isCorrect) {
+                correctSound.play();
+                correctAnswersInLevel++;
+            } else {
+                incorrectSound.play();
+            }
+
+            // Aplicar destaque de correto/incorreto às opções - sem animação, apenas a cor se mantém
+            document.querySelectorAll('.option-btn').forEach(button => {
+                if (button.textContent === currentQuestion.answer) {
+                    button.style.backgroundColor = 'var(--correct-feedback)'; // Aplica cor de acerto
+                    button.style.color = 'white';
+                } else if (button.textContent === selectedOption) {
+                    button.style.backgroundColor = 'var(--incorrect-feedback)'; // Aplica cor de erro
+                    button.style.color = 'white';
+                }
+            });
+
+            // Após um pequeno atraso, esconder o overlay de feedback e revelar os botões de navegação
+            setTimeout(() => {
+                feedbackOverlay.classList.remove('active', 'correct', 'incorrect');
+                feedbackOverlay.classList.add('hidden');
+                
+                quizNavigationButtons.classList.remove('hidden'); // Revela os botões de navegação
+
+            }, 1500); // Overlay de feedback visível por 1.5 segundos
+
+            updateProgressBar();
+        }
+
+        /**
+         * Exibe a dica para a pergunta atual.
+         */
+        function showTip() {
+            const currentQuestion = quizData[currentLevelIndex].questions[currentQuestionIndex];
+            if (currentQuestion.tip) {
+                tipContent.textContent = currentQuestion.tip;
+                tipContent.classList.remove('hidden');
+            }
+        }
+
+        /**
+         * (Removed) Function to close the explanation overlay. Not needed anymore.
+         */
+        // function closeExplanationOverlay() {
+        //     explanationOverlay.classList.remove('active');
+        //     explanationOverlay.classList.add('hidden');
+        //     quizNavigationButtons.classList.remove('hidden');
+        // }
+
+
+        /**
+         * Atualiza a barra de progresso do quiz.
+         */
+        function updateProgressBar() {
+            const progress = ((currentQuestionIndex + 1) / questionsPerLevel) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        /**
+         * Avança para a próxima pergunta ou encerra o nível/jogo.
+         */
+        function nextQuestion() {
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < questionsPerLevel) {
+                displayQuestion();
+            } else {
+                // Fim do nível
+                quizScreen.classList.add('hidden');
+                quizScreen.classList.remove('active');
+                levelEndScreen.classList.add('active');
+                levelEndScreen.classList.remove('hidden');
+
+                const currentLevelData = quizData[currentLevelIndex];
+                const percentageCorrect = (correctAnswersInLevel / questionsPerLevel) * 100;
+
+                levelEndTitle.textContent = `Nível ${currentLevelData.level} Concluído!`;
+                levelEndScore.textContent = `Você acertou ${correctAnswersInLevel} de ${questionsPerLevel} perguntas (${percentageCorrect.toFixed(0)}%).`;
+
+                // Lógica de desbloqueio de próximo nível
+                unlockedContentSection.classList.add('hidden'); // Esconde por padrão
+
+                // Se o jogador acertou pelo menos 70% das perguntas, desbloqueia o próximo nível
+                if (percentageCorrect >= 70) { // Critério para desbloqueio
+                    if (currentLevelIndex + 1 < quizData.length && !unlockedLevels.includes(currentLevelIndex + 1)) {
+                        unlockedLevels.push(currentLevelIndex + 1);
+                        saveProgress(); // Salva o novo nível desbloqueado
+
+                        // Exibe conteúdo desbloqueado
+                        unlockedContentSection.classList.remove('hidden');
+                        unlockedContentTitle.textContent = currentLevelData.unlockedContent.title;
+                        unlockedContentDescription.textContent = currentLevelData.unlockedContent.description;
+                    } else if (currentLevelIndex + 1 === quizData.length) {
+                        // Último nível completado, exibir tela final do jogo
+                        showGameEndScreen();
+                        return; // Sai da função para não voltar à seleção de níveis
+                    }
+                }
+            }
+        }
+
+        /**
+         * Exibe a tela final do jogo quando todos os níveis são concluídos.
+         */
+        function showGameEndScreen() {
+            levelEndScreen.classList.add('hidden');
+            levelEndScreen.classList.remove('active');
+            gameEndScreen.classList.add('active');
+            gameEndScreen.classList.remove('hidden');
+        }
+
+        /**
+         * Reinicia o jogo, limpando o progresso e voltando para a tela inicial.
+         */
+        function restartGame() {
+            localStorage.clear(); // Limpa todo o progresso
+            unlockedLevels = [0]; // Desbloqueia apenas o primeiro nível
+            showStartScreen();
+        }
+
+        // --- Event Listeners ---
+        startButton.addEventListener('click', showLevelSelectionScreen);
+        // Ao sair do jogo (pela seleção de nível ou tela de quiz), ele se reinicia desde o começo
+        backToStartButton.addEventListener('click', restartGame);
+        backToStartQuizButton.addEventListener('click', restartGame); // Evento para o botão no quiz
+        tipButton.addEventListener('click', showTip);
+        nextButton.addEventListener('click', nextQuestion);
+        returnToLevelsButton.addEventListener('click', showLevelSelectionScreen);
+        restartGameButton.addEventListener('click', restartGame);
+        // explanationCloseButton.addEventListener('click', closeExplanationOverlay); // Listener removido
+
+        // Inicializar o jogo ao carregar a página
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProgress();
+            showStartScreen(); // Começa na tela inicial
+        });
+    </script>
+</body>
+</html>
