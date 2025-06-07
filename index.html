@@ -329,8 +329,6 @@
             pointer-events: auto;
         }
 
-        /* Removed Explanation Overlay CSS as it's no longer used */
-
         /* Navigation buttons - Improved Layout */
         .quiz-navigation-buttons {
             display: flex;
@@ -502,10 +500,10 @@
         <div class="container">
             <!-- Tela Inicial -->
             <div id="start-screen" class="screen active">
-                <!-- Título removido daqui -->
                 <h2>Bem-vindo(a) ao Desafio da Reprodução Bovina!</h2>
-                <p>Prepare-se para testar seus conhecimentos e aprender tudo sobre a reprodução em vacas e touros. Avance pelos níveis, desbloqueie conteúdo exclusivo e torne-se um(a) verdadeiro(a) expert!</p>
+                <p>Prepare-se para testar seus conhecimentos sobre a reprodução bovina. Avance pelos níveis, desbloqueie conteúdo exclusivo e torne-se um(a) verdadeiro(a) expert!</p>
                 <button id="start-button" class="btn primary-btn">Iniciar Jogo</button>
+                <button id="back-to-site-button" class="btn secondary-btn">Voltar ao site</button>
             </div>
 
             <!-- Tela de Seleção de Nível -->
@@ -535,8 +533,8 @@
                     <div id="options-container" class="options-grid">
                         <!-- Opções serão inseridas aqui pelo JavaScript -->
                     </div>
-                    <button id="tip-button" class="btn secondary-btn hidden">🤔 Dica</button>
-                    <p id="tip-content" class="tip-content hidden"></p>
+                    <!-- Botão de Dica removido -->
+                    <!-- Conteúdo da Dica removido -->
                 </div>
 
                 <!-- Botões de navegação do quiz -->
@@ -554,7 +552,6 @@
                     <h3>Conteúdo Desbloqueado! 🔓</h3>
                     <h4 id="unlocked-content-title"></h4>
                     <p id="unlocked-content-description"></p>
-                    <!-- Imagem de conteúdo desbloqueado removida -->
                 </div>
                 <button id="return-to-levels-button" class="btn primary-btn">Voltar para Níveis</button>
             </div>
@@ -572,8 +569,6 @@
     <div id="feedback-overlay" class="feedback-overlay hidden">
         <span id="overlay-message"></span>
     </div>
-
-    <!-- Explanation Overlay - REMOVED from HTML as it's no longer used -->
 
     <!-- Elementos de Áudio para Feedback -->
     <audio id="correct-sound" src="https://www.soundjay.com/buttons/sounds/button-7.mp3" preload="auto"></audio>
@@ -922,6 +917,7 @@
         const gameEndScreen = document.getElementById('game-end-screen');
 
         const startButton = document.getElementById('start-button');
+        const backToSiteButton = document.getElementById('back-to-site-button'); // Novo botão "Voltar ao site"
         const levelButtonsContainer = document.getElementById('level-buttons-container');
         const backToStartButton = document.getElementById('back-to-start-button'); // Botão "Voltar ao Início" na seleção de nível
 
@@ -930,8 +926,9 @@
         const progressBar = document.getElementById('progress-bar');
         const questionText = document.getElementById('question-text');
         const optionsContainer = document.getElementById('options-container');
-        const tipButton = document.getElementById('tip-button');
-        const tipContent = document.getElementById('tip-content');
+        // Tip elements removed
+        // const tipButton = document.getElementById('tip-button');
+        // const tipContent = document.getElementById('tip-content');
         
         const nextButton = document.getElementById('next-button');
         const backToStartQuizButton = document.getElementById('back-to-start-quiz-button'); // Botão "Voltar ao Início" no quiz
@@ -947,10 +944,6 @@
         const feedbackOverlay = document.getElementById('feedback-overlay'); // Elemento de overlay de feedback
         const overlayMessage = document.getElementById('overlay-message'); // Mensagem dentro do overlay
 
-        // Explanation Overlay elements are removed as explanation is removed
-        // const explanationOverlay = document.getElementById('explanation-overlay');
-        // const explanationOverlayText = document.getElementById('explanation-overlay-text');
-        // const explanationCloseButton = document.getElementById('explanation-close-button');
         const quizNavigationButtons = document.getElementById('quiz-navigation-buttons'); // Container dos botões de navegação no quiz
 
         // Elementos de Áudio
@@ -1067,19 +1060,18 @@
                 optionsContainer.appendChild(button);
             });
 
-            // Resetar dicas e esconder overlays/botões de navegação
-            tipContent.classList.add('hidden');
-            tipContent.textContent = '';
+            // Resetar e esconder overlays/botões de navegação
+            // tipContent.classList.add('hidden'); // Removed tip
+            // tipContent.textContent = ''; // Removed tip
             feedbackOverlay.classList.add('hidden');
-            // explanationOverlay.classList.add('hidden'); // Removed as explanation is removed
             quizNavigationButtons.classList.add('hidden'); // Garante que os botões de navegação estejam escondidos
 
-            // Exibir botão de dica se houver dica
-            if (currentQuestion.tip) {
-                tipButton.classList.remove('hidden');
-            } else {
-                tipButton.classList.add('hidden');
-            }
+            // Exibir botão de dica se houver dica (logic removed)
+            // if (currentQuestion.tip) {
+            //     tipButton.classList.remove('hidden');
+            // } else {
+            //     tipButton.classList.add('hidden');
+            // }
 
             // Habilitar todas as opções e remover quaisquer estilos de feedback
             document.querySelectorAll('.option-btn').forEach(button => {
@@ -1142,25 +1134,15 @@
         }
 
         /**
-         * Exibe a dica para a pergunta atual.
+         * (Removed) Exibe a dica para a pergunta atual.
          */
-        function showTip() {
-            const currentQuestion = quizData[currentLevelIndex].questions[currentQuestionIndex];
-            if (currentQuestion.tip) {
-                tipContent.textContent = currentQuestion.tip;
-                tipContent.classList.remove('hidden');
-            }
-        }
-
-        /**
-         * (Removed) Function to close the explanation overlay. Not needed anymore.
-         */
-        // function closeExplanationOverlay() {
-        //     explanationOverlay.classList.remove('active');
-        //     explanationOverlay.classList.add('hidden');
-        //     quizNavigationButtons.classList.remove('hidden');
+        // function showTip() {
+        //     const currentQuestion = quizData[currentLevelIndex].questions[currentQuestionIndex];
+        //     if (currentQuestion.tip) {
+        //         tipContent.textContent = currentQuestion.tip;
+        //         tipContent.classList.remove('hidden');
+        //     }
         // }
-
 
         /**
          * Atualiza a barra de progresso do quiz.
@@ -1234,14 +1216,16 @@
 
         // --- Event Listeners ---
         startButton.addEventListener('click', showLevelSelectionScreen);
+        backToSiteButton.addEventListener('click', () => { // Novo evento para o botão "Voltar ao site"
+            window.location.href = 'https://repro-fiv-bz5d.vercel.app/#/';
+        });
         // Ao sair do jogo (pela seleção de nível ou tela de quiz), ele se reinicia desde o começo
         backToStartButton.addEventListener('click', restartGame);
         backToStartQuizButton.addEventListener('click', restartGame); // Evento para o botão no quiz
-        tipButton.addEventListener('click', showTip);
+        // tipButton.addEventListener('click', showTip); // Removed tip
         nextButton.addEventListener('click', nextQuestion);
         returnToLevelsButton.addEventListener('click', showLevelSelectionScreen);
         restartGameButton.addEventListener('click', restartGame);
-        // explanationCloseButton.addEventListener('click', closeExplanationOverlay); // Listener removido
 
         // Inicializar o jogo ao carregar a página
         document.addEventListener('DOMContentLoaded', () => {
