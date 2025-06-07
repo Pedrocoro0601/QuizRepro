@@ -23,6 +23,8 @@
             --shadow-light: 0 4px 10px rgba(0, 0, 0, 0.08);
             --shadow-medium: 0 8px 20px rgba(0, 0, 0, 0.15);
             --dark-blue-background: #1a2b3c; /* Azul muito escuro para a mensagem de desktop */
+            --red-button-color: #e74c3c; /* Vermelho para o botão de sair */
+            --red-button-hover: #c0392b; /* Vermelho mais escuro para hover */
         }
 
         /* Base e Tipografia */
@@ -135,6 +137,20 @@
             transform: translateY(-2px);
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
         }
+
+        /* Botão Voltar ao site em vermelho */
+        #back-to-site-button {
+            background-color: var(--red-button-color);
+            color: white;
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        #back-to-site-button:hover {
+            background-color: var(--red-button-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
+        }
+
 
         /* Telas de Jogo */
         .screen {
@@ -503,7 +519,7 @@
                 <h2>Bem-vindo(a) ao Desafio da Reprodução Bovina!</h2>
                 <p>Prepare-se para testar seus conhecimentos sobre a reprodução bovina. Avance pelos níveis, desbloqueie conteúdo exclusivo e torne-se um(a) verdadeiro(a) expert!</p>
                 <button id="start-button" class="btn primary-btn">Iniciar Jogo</button>
-                <button id="back-to-site-button" class="btn secondary-btn">Voltar ao site</button>
+                <button id="back-to-site-button" class="btn primary-btn">Voltar ao site</button>
             </div>
 
             <!-- Tela de Seleção de Nível -->
@@ -528,19 +544,17 @@
                     <div id="progress-bar" class="progress-bar"></div>
                 </div>
 
+                <!-- Botões de navegação do quiz -->
+                <div id="quiz-navigation-buttons" class="quiz-navigation-buttons hidden">
+                    <button id="next-button" class="btn primary-btn">Próxima Pergunta ▶</button>
+                    <button id="back-to-start-quiz-button" class="btn secondary-btn">Voltar ao Início</button>
+                </div>
+
                 <div class="question-card">
                     <p id="question-text" class="question-text"></p>
                     <div id="options-container" class="options-grid">
                         <!-- Opções serão inseridas aqui pelo JavaScript -->
                     </div>
-                    <!-- Botão de Dica removido -->
-                    <!-- Conteúdo da Dica removido -->
-                </div>
-
-                <!-- Botões de navegação do quiz -->
-                <div id="quiz-navigation-buttons" class="quiz-navigation-buttons hidden">
-                    <button id="back-to-start-quiz-button" class="btn secondary-btn">Voltar ao Início</button>
-                    <button id="next-button" class="btn primary-btn">Próxima Pergunta ▶</button>
                 </div>
             </div>
 
@@ -627,7 +641,7 @@
                     {
                         question: "Onde ocorre a fecundação na fêmea bovina?",
                         options: ["Útero", "Ovário", "Vagina", "Oviduto (Tuba Uterina)"],
-                        answer: "Oviduto (Tuba Uterina)",
+                        answer: "Oviduto (Tuba uterina)",
                         explanation: "A fecundação, que é a união do espermatozoide com o óvulo, ocorre tipicamente na ampola do oviduto (tuba uterina), após a ovulação.",
                         tip: "É o 'caminho' que o óvulo percorre e encontra o espermatozoide."
                     },
@@ -926,9 +940,6 @@
         const progressBar = document.getElementById('progress-bar');
         const questionText = document.getElementById('question-text');
         const optionsContainer = document.getElementById('options-container');
-        // Tip elements removed
-        // const tipButton = document.getElementById('tip-button');
-        // const tipContent = document.getElementById('tip-content');
         
         const nextButton = document.getElementById('next-button');
         const backToStartQuizButton = document.getElementById('back-to-start-quiz-button'); // Botão "Voltar ao Início" no quiz
@@ -1061,17 +1072,8 @@
             });
 
             // Resetar e esconder overlays/botões de navegação
-            // tipContent.classList.add('hidden'); // Removed tip
-            // tipContent.textContent = ''; // Removed tip
             feedbackOverlay.classList.add('hidden');
             quizNavigationButtons.classList.add('hidden'); // Garante que os botões de navegação estejam escondidos
-
-            // Exibir botão de dica se houver dica (logic removed)
-            // if (currentQuestion.tip) {
-            //     tipButton.classList.remove('hidden');
-            // } else {
-            //     tipButton.classList.add('hidden');
-            // }
 
             // Habilitar todas as opções e remover quaisquer estilos de feedback
             document.querySelectorAll('.option-btn').forEach(button => {
@@ -1132,17 +1134,6 @@
 
             updateProgressBar();
         }
-
-        /**
-         * (Removed) Exibe a dica para a pergunta atual.
-         */
-        // function showTip() {
-        //     const currentQuestion = quizData[currentLevelIndex].questions[currentQuestionIndex];
-        //     if (currentQuestion.tip) {
-        //         tipContent.textContent = currentQuestion.tip;
-        //         tipContent.classList.remove('hidden');
-        //     }
-        // }
 
         /**
          * Atualiza a barra de progresso do quiz.
@@ -1216,13 +1207,12 @@
 
         // --- Event Listeners ---
         startButton.addEventListener('click', showLevelSelectionScreen);
-        backToSiteButton.addEventListener('click', () => { // Novo evento para o botão "Voltar ao site"
+        backToSiteButton.addEventListener('click', () => { // Evento para o botão "Voltar ao site"
             window.location.href = 'https://repro-fiv-bz5d.vercel.app/#/';
         });
         // Ao sair do jogo (pela seleção de nível ou tela de quiz), ele se reinicia desde o começo
         backToStartButton.addEventListener('click', restartGame);
         backToStartQuizButton.addEventListener('click', restartGame); // Evento para o botão no quiz
-        // tipButton.addEventListener('click', showTip); // Removed tip
         nextButton.addEventListener('click', nextQuestion);
         returnToLevelsButton.addEventListener('click', showLevelSelectionScreen);
         restartGameButton.addEventListener('click', restartGame);
